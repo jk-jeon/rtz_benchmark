@@ -364,13 +364,11 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> naive_8_2_1(std::uint64_t n) noexcept {
-        constexpr auto magic_number = UINT64_C(12379400392853802749);
-        auto nm = wuint::umul128(n, magic_number);
-
         // Is significand divisible by 10^8?
-        if ((nm.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
+        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
+        if (nm < UINT64_C(184467440969)) {
             // If yes, work with the quotient.
-            auto result = alg32::naive_2_1(std::uint32_t(nm.high() >> (90 - 64)));
+            auto result = alg32::naive_2_1(std::uint32_t(nm >> 8));
             return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
         }
 
@@ -429,13 +427,11 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> granlund_montgomery_8_2_1(std::uint64_t n) noexcept {
-        constexpr auto magic_number = UINT64_C(12379400392853802749);
-        auto nm = wuint::umul128(n, magic_number);
-
         // Is significand divisible by 10^8?
-        if ((nm.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
+        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
+        if (nm < UINT64_C(184467440969)) {
             // If yes, work with the quotient.
-            auto result = alg32::granlund_montgomery_2_1(std::uint32_t(nm.high() >> (90 - 64)));
+            auto result = alg32::granlund_montgomery_2_1(std::uint32_t(nm >> 8));
             return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
         }
 
@@ -494,13 +490,11 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> lemire_8_2_1(std::uint64_t n) noexcept {
-        constexpr auto magic_number = UINT64_C(12379400392853802749);
-        auto nm = wuint::umul128(n, magic_number);
-
         // Is significand divisible by 10^8?
-        if ((nm.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
+        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
+        if (nm < UINT64_C(184467440969)) {
             // If yes, work with the quotient.
-            auto result = alg32::lemire_2_1(std::uint32_t(nm.high() >> (90 - 64)));
+            auto result = alg32::lemire_2_1(std::uint32_t(nm >> 8));
             return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
         }
 
@@ -562,14 +556,12 @@ namespace alg64 {
 
     remove_trailing_zeros_return<std::uint64_t>
     generalized_granlund_montgomery_8_2_1(std::uint64_t n) noexcept {
-        constexpr auto magic_number = UINT64_C(12379400392853802749);
-        auto nm = wuint::umul128(n, magic_number);
-
         // Is significand divisible by 10^8?
-        if ((nm.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
+        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
+        if (nm < UINT64_C(184467440969)) {
             // If yes, work with the quotient.
             auto result =
-                alg32::generalized_granlund_montgomery_2_1(std::uint32_t(nm.high() >> (90 - 64)));
+                alg32::generalized_granlund_montgomery_2_1(std::uint32_t(nm >> 8));
             return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
         }
 
