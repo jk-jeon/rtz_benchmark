@@ -4,4 +4,4 @@ check-filenames =
 check-hidden =
 skip = */.git,*/build
 quiet-level = 2
-ignore-words-list = UInt
+ignore-words-list = "UInt"
