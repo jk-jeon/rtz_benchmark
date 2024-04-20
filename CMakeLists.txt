@@ -6,7 +6,6 @@ project(
     rtz_benchmark
     VERSION 0.1.0
     DESCRIPTION "Benchmark several different trailing zero removal algorithms"
-    HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
 )
 
@@ -14,21 +13,6 @@ docs_early_return()
 
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
-
-# ---- Declare library ----
-
-add_library(
-    rtz_benchmark_lib OBJECT
-    source/lib.cpp
-)
-
-target_include_directories(
-    rtz_benchmark_lib ${warning_guard}
-    PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
-)
-
-target_compile_features(rtz_benchmark_lib PUBLIC cxx_std_17)
 
 # ---- Declare executable ----
 
@@ -41,9 +25,7 @@ set_target_properties(
     EXPORT_NAME exe
 )
 
-target_compile_features(rtz_benchmark_exe PRIVATE cxx_std_17)
-
-target_link_libraries(rtz_benchmark_exe PRIVATE rtz_benchmark_lib)
+target_compile_features(rtz_benchmark_exe PRIVATE cxx_std_20)
 
 # ---- Install rules ----
 
