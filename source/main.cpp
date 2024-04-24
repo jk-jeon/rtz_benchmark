@@ -219,6 +219,27 @@ namespace alg32 {
         return {n, s};
     }
 
+    remove_trailing_zeros_return<std::uint32_t> naive_branchless(std::uint32_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = n / 1'0000;
+        auto b = n % 1'0000 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = n / 100;
+        b = n % 100 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = n / 10;
+        b = n % 10 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        return {n, s};
+    }
+
     remove_trailing_zeros_return<std::uint32_t> granlund_montgomery(std::uint32_t n) noexcept {
         std::size_t s = 0;
         while (true) {
@@ -237,7 +258,7 @@ namespace alg32 {
     remove_trailing_zeros_return<std::uint32_t> granlund_montgomery_2_1(std::uint32_t n) noexcept {
         std::size_t s = 0;
         while (true) {
-            auto const r = rotr<32>(std::uint32_t(n * UINT32_C(3264175145)), 2);
+            auto const r = rotr<32>(std::uint32_t(n * UINT32_C(42949673)), 2);
             if (r < UINT32_C(42949673)) {
                 n = r;
                 s += 2;
@@ -246,11 +267,33 @@ namespace alg32 {
                 break;
             }
         }
-        auto const r = rotr<32>(std::uint32_t(n * UINT32_C(3435973837)), 1);
+        auto const r = rotr<32>(std::uint32_t(n * UINT32_C(1288490189)), 1);
         if (r < UINT32_C(429496730)) {
             n = r;
             s += 1;
         }
+        return {n, s};
+    }
+
+    remove_trailing_zeros_return<std::uint32_t>
+    granlund_montgomery_branchless(std::uint32_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = rotr<32>(std::uint32_t(n * UINT32_C(184254097)), 4);
+        auto b = r < UINT32_C(429497);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = rotr<32>(std::uint32_t(n * UINT32_C(42949673)), 2);
+        b = r < UINT32_C(42949673);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = rotr<32>(std::uint32_t(n * UINT32_C(1288490189)), 1);
+        b = r < UINT32_C(429496730);
+        s = s * 2 + b;
+        n = b ? r : n;
+
         return {n, s};
     }
 
@@ -289,6 +332,27 @@ namespace alg32 {
         return {n, s};
     }
 
+    remove_trailing_zeros_return<std::uint32_t> lemire_branchless(std::uint32_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = std::uint64_t(n * UINT64_C(109951163));
+        auto b = (r & ((std::uint64_t(1) << 40) - 1)) < UINT64_C(109951163);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 40) : n;
+
+        r = std::uint64_t(n * UINT64_C(42949673));
+        b = static_cast<std::uint32_t>(r) < UINT32_C(42949673);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 32) : n;
+
+        r = std::uint64_t(n * UINT64_C(429496730));
+        b = static_cast<std::uint32_t>(r) < UINT32_C(429496730);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 32) : n;
+
+        return {n, s};
+    }
+
     remove_trailing_zeros_return<std::uint32_t>
     generalized_granlund_montgomery(std::uint32_t n) noexcept {
         std::size_t s = 0;
@@ -323,6 +387,28 @@ namespace alg32 {
             n = std::uint32_t(r >> 1);
             s += 1;
         }
+        return {n, s};
+    }
+
+    remove_trailing_zeros_return<std::uint32_t>
+    generalized_granlund_montgomery_branchless(std::uint32_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = std::uint32_t(n * UINT32_C(184254097));
+        auto b = r < UINT32_C(429509);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 4) : n;
+
+        r = std::uint32_t(n * UINT32_C(42949673));
+        b = r < UINT32_C(42949673);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 2) : n;
+
+        r = std::uint32_t(n * UINT32_C(1288490189));
+        b = r < UINT32_C(429496731);
+        s = s * 2 + b;
+        n = b ? std::uint32_t(r >> 1) : n;
+
         return {n, s};
     }
 
@@ -392,6 +478,32 @@ namespace alg64 {
         return {n, s};
     }
 
+    remove_trailing_zeros_return<std::uint64_t> naive_branchless(std::uint64_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = n / 1'0000'0000;
+        auto b = n % 1'0000'0000 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = n / 1'0000;
+        b = n % 1'0000 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = n / 100;
+        b = n % 100 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = n / 10;
+        b = n % 10 == 0;
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        return {n, s};
+    }
+
     remove_trailing_zeros_return<std::uint64_t> granlund_montgomery(std::uint64_t n) noexcept {
         std::size_t s = 0;
         while (true) {
@@ -457,6 +569,33 @@ namespace alg64 {
         return {n, s};
     }
 
+    remove_trailing_zeros_return<std::uint64_t>
+    granlund_montgomery_branchless(std::uint64_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = rotr<64>(std::uint64_t(n * UINT64_C(28999941890838049)), 8);
+        auto b = r < UINT64_C(184467440738);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = rotr<64>(std::uint64_t(n * UINT64_C(182622766329724561)), 4);
+        b = r < UINT64_C(1844674407370956);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = rotr<64>(std::uint64_t(n * UINT64_C(10330176681277348905)), 2);
+        b = r < UINT64_C(184467440737095517);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        r = rotr<64>(std::uint64_t(n * UINT32_C(14757395258967641293)), 1);
+        b = r < UINT64_C(1844674407370955162);
+        s = s * 2 + b;
+        n = b ? r : n;
+
+        return {n, s};
+    }
+
     remove_trailing_zeros_return<std::uint64_t> lemire(std::uint64_t n) noexcept {
         std::size_t s = 0;
         while (true) {
@@ -495,11 +634,11 @@ namespace alg64 {
     remove_trailing_zeros_return<std::uint64_t> lemire_8_2_1(std::uint64_t n) noexcept {
         {
             // Is n divisible by 10^8?
-            // magic_number = ceil(2^90 / 10^8).
+            // 12089258196146292 = ceil(2^90 / 10^8).
             // Works up to n <= 47'795'296'599'999'999.
-            constexpr auto magic_number = UINT64_C(12089258196146292);
-            auto r = wuint::umul128(n, magic_number);
-            if ((r.high() & ((std::uint64_t(1) << (80 - 64)) - 1)) == 0 && r.low() < magic_number) {
+            auto r = wuint::umul128(n, UINT64_C(12089258196146292));
+            if ((r.high() & ((std::uint64_t(1) << (80 - 64)) - 1)) == 0 &&
+                r.low() < UINT64_C(12089258196146292)) {
                 // If yes, work with the quotient.
                 auto result = alg32::lemire_2_1(std::uint32_t(r.high() >> (80 - 64)));
                 return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
@@ -522,6 +661,34 @@ namespace alg64 {
             n = r.high();
             s += 1;
         }
+        return {n, s};
+    }
+
+    remove_trailing_zeros_return<std::uint64_t> lemire_branchless(std::uint64_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = wuint::umul128(n, UINT64_C(12089258196146292));
+        auto b = (r.high() & ((std::uint64_t(1) << (80 - 64)) - 1)) == 0 &&
+                 r.low() < UINT64_C(12089258196146292);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r.high() >> (80 - 64)) : n;
+
+        r = wuint::umul128(n, UINT64_C(472236648286964522));
+        b = (r.high() & ((std::uint64_t(1) << (72 - 64)) - 1)) == 0 &&
+            r.low() < UINT64_C(472236648286964522);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r.high() >> (72 - 64)) : n;
+
+        r = wuint::umul128(n, UINT64_C(184467440737095517));
+        b = r.low() < UINT64_C(184467440737095517);
+        s = s * 2 + b;
+        n = b ? r.high() : n;
+
+        r = wuint::umul128(n, UINT64_C(1844674407370955162));
+        b = r.low() < UINT64_C(1844674407370955162);
+        s = s * 2 + b;
+        n = b ? r.high() : n;
+
         return {n, s};
     }
 
@@ -566,10 +733,10 @@ namespace alg64 {
     generalized_granlund_montgomery_8_2_1(std::uint64_t n) noexcept {
         {
             // Is n divisible by 10^8?
-            auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
-            if (nm < UINT64_C(184467440969)) {
+            auto const r = std::uint64_t(n * UINT64_C(28999941890838049));
+            if (r < UINT64_C(184467440969)) {
                 // If yes, work with the quotient.
-                auto result = alg32::generalized_granlund_montgomery_2_1(std::uint32_t(nm >> 8));
+                auto result = alg32::generalized_granlund_montgomery_2_1(std::uint32_t(r >> 8));
                 return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
             }
         }
@@ -590,6 +757,33 @@ namespace alg64 {
             n = std::uint64_t(r >> 1);
             s += 1;
         }
+        return {n, s};
+    }
+
+    remove_trailing_zeros_return<std::uint64_t>
+    generalized_granlund_montgomery_branchless(std::uint64_t n) noexcept {
+        std::size_t s = 0;
+
+        auto r = std::uint64_t(n * UINT64_C(28999941890838049));
+        auto b = r < UINT64_C(184467440969);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r >> 8) : n;
+
+        r = std::uint64_t(n * UINT64_C(182622766329724561));
+        b = r < UINT64_C(1844674407370971);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r >> 4) : n;
+
+        r = std::uint64_t(n * UINT64_C(14941862699704736809));
+        b = r < UINT64_C(184467440737095517);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r >> 2) : n;
+
+        r = std::uint64_t(n * UINT64_C(5534023222112865485));
+        b = r < UINT64_C(1844674407370955163);
+        s = s * 2 + b;
+        n = b ? std::uint64_t(r >> 1) : n;
+
         return {n, s};
     }
 
@@ -659,15 +853,20 @@ int main() {
         std::cout << "[32-bit benchmark for numbers with at most 8 digits]\n\n";
 
         std::vector<benchmark_candidate<std::uint32_t>> benchmark_candidates = {
-            {"Null (baseline)", alg32::baseline},                                               //
-            {"Naive", alg32::naive},                                                            //
-            {"Granlund-Montgomery", alg32::granlund_montgomery},                                //
-            {"Lemire", alg32::lemire},                                                          //
-            {"Generalized Granlund-Montgomery", alg32::generalized_granlund_montgomery},        //
-            {"Naive 2-1", alg32::naive_2_1},                                                    //
-            {"Granlund-Montgomery 2-1", alg32::granlund_montgomery_2_1},                        //
-            {"Lemire 2-1", alg32::lemire_2_1},                                                  //
-            {"Generalized Granlund-Montgomery 2-1", alg32::generalized_granlund_montgomery_2_1} //
+            {"Null (baseline)", alg32::baseline},                                                //
+            {"Naive", alg32::naive},                                                             //
+            {"Granlund-Montgomery", alg32::granlund_montgomery},                                 //
+            {"Lemire", alg32::lemire},                                                           //
+            {"Generalized Granlund-Montgomery", alg32::generalized_granlund_montgomery},         //
+            {"Naive 2-1", alg32::naive_2_1},                                                     //
+            {"Granlund-Montgomery 2-1", alg32::granlund_montgomery_2_1},                         //
+            {"Lemire 2-1", alg32::lemire_2_1},                                                   //
+            {"Generalized Granlund-Montgomery 2-1", alg32::generalized_granlund_montgomery_2_1}, //
+            {"Naive branchless", alg32::naive_branchless},                                       //
+            {"Granlund-Montgomery branchless", alg32::granlund_montgomery_branchless},           //
+            {"Lemire branchless", alg32::lemire_branchless},                                     //
+            {"Generalized Granlund-Montgomery branchless",
+             alg32::generalized_granlund_montgomery_branchless} //
         };
 
         benchmark(benchmark_candidates, 100000, 8, std::chrono::milliseconds(1500));
@@ -682,19 +881,24 @@ int main() {
         std::cout << "[64-bit benchmark for numbers with at most 16 digits]\n\n";
 
         std::vector<benchmark_candidate<std::uint64_t>> benchmark_candidates = {
-            {"Null (baseline)", alg64::baseline},                                                   //
-            {"Naive", alg64::naive},                                                                //
-            {"Granlund-Montgomery", alg64::granlund_montgomery},                                    //
-            {"Lemire", alg64::lemire},                                                              //
-            {"Generalized Granlund-Montgomery", alg64::generalized_granlund_montgomery},            //
-            {"Naive 2-1", alg64::naive_2_1},                                                        //
-            {"Granlund-Montgomery 2-1", alg64::granlund_montgomery_2_1},                            //
-            {"Lemire 2-1", alg64::lemire_2_1},                                                      //
-            {"Generalized Granlund-Montgomery 2-1", alg64::generalized_granlund_montgomery_2_1},    //
-            {"Naive 8-2-1", alg64::naive_8_2_1},                                                    //
-            {"Granlund-Montgomery 8-2-1", alg64::granlund_montgomery_8_2_1},                        //
-            {"Lemire 8-2-1", alg64::lemire_8_2_1},                                                  //
-            {"Generalized Granlund-Montgomery 8-2-1", alg64::generalized_granlund_montgomery_8_2_1} //
+            {"Null (baseline)", alg64::baseline},                                                    //
+            {"Naive", alg64::naive},                                                                 //
+            {"Granlund-Montgomery", alg64::granlund_montgomery},                                     //
+            {"Lemire", alg64::lemire},                                                               //
+            {"Generalized Granlund-Montgomery", alg64::generalized_granlund_montgomery},             //
+            {"Naive 2-1", alg64::naive_2_1},                                                         //
+            {"Granlund-Montgomery 2-1", alg64::granlund_montgomery_2_1},                             //
+            {"Lemire 2-1", alg64::lemire_2_1},                                                       //
+            {"Generalized Granlund-Montgomery 2-1", alg64::generalized_granlund_montgomery_2_1},     //
+            {"Naive 8-2-1", alg64::naive_8_2_1},                                                     //
+            {"Granlund-Montgomery 8-2-1", alg64::granlund_montgomery_8_2_1},                         //
+            {"Lemire 8-2-1", alg64::lemire_8_2_1},                                                   //
+            {"Generalized Granlund-Montgomery 8-2-1", alg64::generalized_granlund_montgomery_8_2_1}, //
+            {"Naive branchless", alg64::naive_branchless},                                           //
+            {"Granlund-Montgomery branchless", alg64::granlund_montgomery_branchless},               //
+            {"Lemire branchless", alg64::lemire_branchless},                                         //
+            {"Generalized Granlund-Montgomery branchless",
+             alg64::generalized_granlund_montgomery_branchless} //
         };
 
         benchmark(benchmark_candidates, 100000, 16, std::chrono::milliseconds(1500));
