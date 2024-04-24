@@ -871,7 +871,7 @@ int main() {
 
         benchmark(benchmark_candidates, 100000, 8, std::chrono::milliseconds(1500));
         for (auto const& candidate : benchmark_candidates) {
-            std::cout << std::setw(37) << candidate.name << ": "
+            std::cout << std::setw(42) << candidate.name << ": "
                       << candidate.average_time_in_nanoseconds << "ns\n";
         }
         std::cout << "\n\n";
@@ -903,7 +903,7 @@ int main() {
 
         benchmark(benchmark_candidates, 100000, 16, std::chrono::milliseconds(1500));
         for (auto const& candidate : benchmark_candidates) {
-            std::cout << std::setw(37) << candidate.name << ": "
+            std::cout << std::setw(42) << candidate.name << ": "
                       << candidate.average_time_in_nanoseconds << "ns\n";
         }
         std::cout << "\n\n";
