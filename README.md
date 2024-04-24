@@ -8,33 +8,33 @@ Here is the benchmark result I got (on 04/20/2024, on Intel(R) Core(TM) i7-7700H
 
 | Algorithms                            | Average time consumed per a sample |
 | --------------------------------------|------------------------------------|
-| Null (baseline)                       | 1.43181ns                          |
-| Naïve                                 | 12.1605ns                          |
-| Granlund-Montgomery                   | 9.79464ns                          |
-| Lemire                                | 10.6359ns                          |
-| Generalized Granlund-Montgomery       | 9.84901ns                          |
-| Naïve 2-1                             | 8.30172ns                          |
-| Granlund-Montgomery 2-1               | 7.15151ns                          |
-| Lemire 2-1                            | 7.08046ns                          |
-| Generalized Granlund-Montgomery 2-1   | 6.902ns                            |
+| Null (baseline)                       | 1.40327ns                          |
+| Naïve                                 | 11.972ns                           |
+| Granlund-Montgomery                   | 10.0685ns                          |
+| Lemire                                | 10.9145ns                          |
+| Generalized Granlund-Montgomery       | 9.91788ns                          |
+| Naïve 2-1                             | 8.70671ns                          |
+| Granlund-Montgomery 2-1               | 7.95768ns                          |
+| Lemire 2-1                            | 7.09958ns                          |
+| Generalized Granlund-Montgomery 2-1   | 6.94924ns                          |
 
 - 64-bit benchmark for numbers with at most 16 digits.
 
 | Algorithms                            | Average time consumed per a sample |
 | --------------------------------------|------------------------------------|
-| Null (baseline)                       | 1.40018ns                          |
-| Naïve                                 | 15.4772ns                          |
-| Granlund-Montgomery                   | 12.8305ns                          |
-| Lemire                                | 14.4215ns                          |
-| Generalized Granlund-Montgomery       | 14.2665ns                          |
-| Naïve 2-1                             | 12.6338ns                          |
-| Granlund-Montgomery 2-1               | 10.6556ns                          |
-| Lemire 2-1                            | 11.6749ns                          |
-| Generalized Granlund-Montgomery 2-1   | 10.8041ns                          |
-| Naïve 8-2-1                           | 11.8362ns                          |
-| Granlund-Montgomery 8-2-1             | 9.86246ns                          |
-| Lemire 8-2-1                          | 11.2846ns                          |
-| Generalized Granlund-Montgomery 8-2-1 | 9.73772ns                          |
+| Null (baseline)                       | 1.40884ns                          |
+| Naïve                                 | 15.3583ns                          |
+| Granlund-Montgomery                   | 12.5624ns                          |
+| Lemire                                | 14.4462ns                          |
+| Generalized Granlund-Montgomery       | 14.318ns                           |
+| Naïve 2-1                             | 12.2732ns                          |
+| Granlund-Montgomery 2-1               | 10.388ns                           |
+| Lemire 2-1                            | 11.3699ns                          |
+| Generalized Granlund-Montgomery 2-1   | 10.6213ns                          |
+| Naïve 8-2-1                           | 12.0705ns                          |
+| Granlund-Montgomery 8-2-1             | 10.1758ns                          |
+| Lemire 8-2-1                          | 13.5926ns                          |
+| Generalized Granlund-Montgomery 8-2-1 | 9.8563ns                           |
 
 **Notes.**
 - Samples were generated randomly using the following procedure:
