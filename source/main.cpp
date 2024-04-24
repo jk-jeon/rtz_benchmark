@@ -496,13 +496,12 @@ namespace alg64 {
         {
             // Is n divisible by 10^8?
             // magic_number = ceil(2^90 / 10^8).
-            // Works up to n <= 1'413'535'012'703'499'999'999, which is larger than the largest value of
-            // std::uint64_t.
-            constexpr auto magic_number = UINT64_C(12379400392853802749);
+            // Works up to n <= 47'795'296'599'999'999.
+            constexpr auto magic_number = UINT64_C(12089258196146292);
             auto r = wuint::umul128(n, magic_number);
-            if ((r.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && r.low() < magic_number) {
+            if ((r.high() & ((std::uint64_t(1) << (80 - 64)) - 1)) == 0 && r.low() < magic_number) {
                 // If yes, work with the quotient.
-                auto result = alg32::lemire_2_1(std::uint32_t(r.high() >> (90 - 64)));
+                auto result = alg32::lemire_2_1(std::uint32_t(r.high() >> (80 - 64)));
                 return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
             }
         }
