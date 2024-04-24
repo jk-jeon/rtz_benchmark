@@ -325,6 +325,8 @@ namespace alg32 {
         }
         return {n, s};
     }
+
+    remove_trailing_zeros_return<std::uint32_t> baseline(std::uint32_t n) noexcept { return {n, 0}; }
 }
 
 namespace alg64 {
@@ -364,11 +366,10 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> naive_8_2_1(std::uint64_t n) noexcept {
-        // Is significand divisible by 10^8?
-        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
-        if (nm < UINT64_C(184467440969)) {
+        if (n % 100'000'000 == 0) {
+            // Is n divisible by 10^8?
             // If yes, work with the quotient.
-            auto result = alg32::naive_2_1(std::uint32_t(nm >> 8));
+            auto result = alg32::naive_2_1(std::uint32_t(n / 100'000'000));
             return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
         }
 
@@ -427,12 +428,14 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> granlund_montgomery_8_2_1(std::uint64_t n) noexcept {
-        // Is significand divisible by 10^8?
-        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
-        if (nm < UINT64_C(184467440969)) {
-            // If yes, work with the quotient.
-            auto result = alg32::granlund_montgomery_2_1(std::uint32_t(nm >> 8));
-            return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+        {
+            // Is n divisible by 10^8?
+            auto const r = rotr<64>(std::uint64_t(n * UINT64_C(28999941890838049)), 8);
+            if (r < UINT64_C(184467440738)) {
+                // If yes, work with the quotient.
+                auto result = alg32::granlund_montgomery_2_1(std::uint32_t(r));
+                return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+            }
         }
 
         std::size_t s = 0;
@@ -490,12 +493,18 @@ namespace alg64 {
     }
 
     remove_trailing_zeros_return<std::uint64_t> lemire_8_2_1(std::uint64_t n) noexcept {
-        // Is significand divisible by 10^8?
-        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
-        if (nm < UINT64_C(184467440969)) {
-            // If yes, work with the quotient.
-            auto result = alg32::lemire_2_1(std::uint32_t(nm >> 8));
-            return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+        {
+            // Is n divisible by 10^8?
+            // magic_number = ceil(2^90 / 10^8).
+            // Works up to n <= 1'413'535'012'703'499'999'999, which is larger than the largest value of
+            // std::uint64_t.
+            constexpr auto magic_number = UINT64_C(12379400392853802749);
+            auto r = wuint::umul128(n, magic_number);
+            if ((r.high() & ((std::uint64_t(1) << (90 - 64)) - 1)) == 0 && r.low() < magic_number) {
+                // If yes, work with the quotient.
+                auto result = alg32::lemire_2_1(std::uint32_t(r.high() >> (90 - 64)));
+                return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+            }
         }
 
         std::size_t s = 0;
@@ -556,13 +565,14 @@ namespace alg64 {
 
     remove_trailing_zeros_return<std::uint64_t>
     generalized_granlund_montgomery_8_2_1(std::uint64_t n) noexcept {
-        // Is significand divisible by 10^8?
-        auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
-        if (nm < UINT64_C(184467440969)) {
-            // If yes, work with the quotient.
-            auto result =
-                alg32::generalized_granlund_montgomery_2_1(std::uint32_t(nm >> 8));
-            return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+        {
+            // Is n divisible by 10^8?
+            auto const nm = std::uint64_t(n * UINT64_C(28999941890838049));
+            if (nm < UINT64_C(184467440969)) {
+                // If yes, work with the quotient.
+                auto result = alg32::generalized_granlund_montgomery_2_1(std::uint32_t(nm >> 8));
+                return {std::uint64_t(result.trimmed_number), result.number_of_removed_zeros + 8};
+            }
         }
 
         std::size_t s = 0;
@@ -583,6 +593,8 @@ namespace alg64 {
         }
         return {n, s};
     }
+
+    remove_trailing_zeros_return<std::uint64_t> baseline(std::uint64_t n) noexcept { return {n, 0}; }
 }
 
 template <class T>
@@ -601,12 +613,13 @@ void benchmark(std::vector<benchmark_candidate<T>>& benchmark_candidates, std::s
 
     std::cout << "Verifying candaite algorithms...\n";
     for (auto const& sample : samples) {
-        auto itr = benchmark_candidates.cbegin();
+        auto itr = benchmark_candidates.cbegin() + 1;
         auto const reference_result = (*itr->candidate_function)(sample);
         for (++itr; itr != benchmark_candidates.cend(); ++itr) {
             if ((*itr->candidate_function)(sample) != reference_result) {
                 std::cout << "Error detected!\n";
-                for (itr = benchmark_candidates.cbegin(); itr != benchmark_candidates.cend(); ++itr) {
+                for (itr = benchmark_candidates.cbegin() + 1; itr != benchmark_candidates.cend();
+                     ++itr) {
                     auto const result = (*itr->candidate_function)(sample);
                     std::cout << "    " << std::setw(37) << itr->name << ": (" << result.trimmed_number
                               << ", " << result.number_of_removed_zeros << ")\n";
@@ -647,6 +660,7 @@ int main() {
         std::cout << "[32-bit benchmark for numbers with at most 8 digits]\n\n";
 
         std::vector<benchmark_candidate<std::uint32_t>> benchmark_candidates = {
+            {"Null (baseline)", alg32::baseline},                                               //
             {"Naive", alg32::naive},                                                            //
             {"Granlund-Montgomery", alg32::granlund_montgomery},                                //
             {"Lemire", alg32::lemire},                                                          //
@@ -669,6 +683,7 @@ int main() {
         std::cout << "[64-bit benchmark for numbers with at most 16 digits]\n\n";
 
         std::vector<benchmark_candidate<std::uint64_t>> benchmark_candidates = {
+            {"Null (baseline)", alg64::baseline},                                                   //
             {"Naive", alg64::naive},                                                                //
             {"Granlund-Montgomery", alg64::granlund_montgomery},                                    //
             {"Lemire", alg64::lemire},                                                              //
