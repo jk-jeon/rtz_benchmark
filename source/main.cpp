@@ -531,7 +531,7 @@ namespace alg64 {
                 break;
             }
         }
-        auto const r = rotr<64>(std::uint64_t(n * UINT32_C(14757395258967641293)), 1);
+        auto const r = rotr<64>(std::uint64_t(n * UINT64_C(14757395258967641293)), 1);
         if (r < UINT64_C(1844674407370955162)) {
             n = r;
             s += 1;
@@ -561,7 +561,7 @@ namespace alg64 {
                 break;
             }
         }
-        auto const r = rotr<64>(std::uint64_t(n * UINT32_C(14757395258967641293)), 1);
+        auto const r = rotr<64>(std::uint64_t(n * UINT64_C(14757395258967641293)), 1);
         if (r < UINT64_C(1844674407370955162)) {
             n = r;
             s += 1;
@@ -588,7 +588,7 @@ namespace alg64 {
         s = s * 2 + b;
         n = b ? r : n;
 
-        r = rotr<64>(std::uint64_t(n * UINT32_C(14757395258967641293)), 1);
+        r = rotr<64>(std::uint64_t(n * UINT64_C(14757395258967641293)), 1);
         b = r < UINT64_C(1844674407370955162);
         s = s * 2 + b;
         n = b ? r : n;
